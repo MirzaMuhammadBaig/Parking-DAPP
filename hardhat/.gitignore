@@ -20,7 +20,6 @@ typechain/
 !.vscode/extensions.json.default
 
 node_modules/
-.env
 
 .yalc
 yalc.lock
@@ -28,9 +27,6 @@ yalc.lock
 contractsInfo.json
 deployments/hardhat
 deployments/localhost
-
-# don't push the environment vars!
-.env
 
 # Built application files
 .DS*
