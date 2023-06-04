@@ -13,7 +13,7 @@ const style = { marginRight: "5px" };
 export const Withdraw: FC = () => {
   const [amount, setAmount] = useState<string>("");
   const [tx, clearTx, withdraw] = useCustomContractFunction("withdraw");
-  const balance = useEtherBalance(process.env.REACT_APP_CONTRACT_ADDRESS);
+  const balance = useEtherBalance('0xF7d7dedb4474Ba4C881CfCe8612E7a76F34d4E77');
 
   const handleWithdraw = async () => {
     if (!amount) return;

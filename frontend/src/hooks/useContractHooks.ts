@@ -7,7 +7,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { abi } from "../Parking.json";
 import { Zone } from "../constants";
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || "";
+const CONTRACT_ADDRESS = '0xF7d7dedb4474Ba4C881CfCe8612E7a76F34d4E77' || "";
 
 const contractInterface = new Interface(abi);
 const contract = new Contract(CONTRACT_ADDRESS, contractInterface);
