@@ -1,0 +1,2 @@
+GOERLI: 0xF7d7dedb4474Ba4C881CfCe8612E7a76F34d4E77
+https://goerli.etherscan.io/address/0xF7d7dedb4474Ba4C881CfCe8612E7a76F34d4E77

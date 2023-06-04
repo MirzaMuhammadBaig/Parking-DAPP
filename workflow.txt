@@ -1,0 +1,27 @@
+function buyTicket(string plate, uint numOfBlocks) {
+	// set parking ticket as bought for selected plate for selected duration
+	// implement some discount for longer duration
+};
+
+function changePrice(uint price, Area area) onlyOwner {
+	//  only owner of a contract can change price per area (from Area enum)
+};
+
+function checkTicket(string plate) boolean {
+	// check if parking ticket is still valid for selected plate
+	// possible add another role (controllers)?
+	// return true/false
+};
+
+function cancelTicket(string plate) {
+	// only user that bought ticket can cancel it and claim unused funds
+	// send unclaimed funds to user
+};
+
+function transferTicket(string oldPlate, string newPlate) {
+	// only user that bought ticket for selected plate can transfer it to other plate
+};
+
+function withdraw() onlyOwner {
+	// only owner of a contract can withdraw funds
+};
