@@ -24,7 +24,7 @@ npm test
 
 ### Deploying contract to testnet
 
-> Fill .env file with required variables (you only need to fill either private key or mnemonic). For example check `.env.example`.
+> Fill .env file with required variables (you only need to fill either private key or mnemonic). For example check `.env.example`. and you can directly this because I have directly add the values in hardhat.config.js.
 
 Deploy to goerli
 
