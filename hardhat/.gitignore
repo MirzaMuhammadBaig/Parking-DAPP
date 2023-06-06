@@ -12,7 +12,6 @@ cache/
 artifacts/
 
 coverage*
-typechain/
 
 .vscode/*
 !.vscode/settings.json.default
