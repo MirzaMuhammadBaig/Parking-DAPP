@@ -13,7 +13,7 @@ const style = { marginRight: "5px" };
 export const Withdraw: FC = () => {
   const [amount, setAmount] = useState<string>("");
   const [tx, clearTx, withdraw] = useCustomContractFunction("withdraw");
-  const balance = useEtherBalance('0xF7d7dedb4474Ba4C881CfCe8612E7a76F34d4E77');
+  const balance = useEtherBalance(process.env.REACT_APP_CONTRACT_ADDRESS);
 
   const handleWithdraw = async () => {
     if (!amount) return;
@@ -30,9 +30,17 @@ export const Withdraw: FC = () => {
         variant="outlined"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        helperText={balance && `Balance in contract: ${formatEtherToFixed(balance, 18)} ETH`}
+        helperText={
+          balance &&
+          `Balance in contract: ${formatEtherToFixed(balance, 18)} ETH`
+        }
       />
-      <Button style={{ maxHeight: "56px" }} variant="contained" color="error" onClick={handleWithdraw}>
+      <Button
+        style={{ maxHeight: "56px" }}
+        variant="contained"
+        color="error"
+        onClick={handleWithdraw}
+      >
         Withdraw ETH
       </Button>
       <Toast tx={tx} />

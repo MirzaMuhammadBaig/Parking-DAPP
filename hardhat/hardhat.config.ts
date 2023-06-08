@@ -7,10 +7,10 @@ import "dotenv/config";
 import "hardhat-deploy";
 import "solidity-coverage";
 
-const GOERLI_RPC_URL = 'https://goerli.infura.io/v3/e4889bb1f25c45ae8e3cca61938d765b' || "";
-const MNEMONIC = 'kiss tattoo rabbit flavor fall damp divorce stable sad time traffic rival';
-const ETHERSCAN_API_KEY = 'R5IVKDKYZ4X7Q62XDU2HAPUTRBN8RXEB72';
-const PRIVATE_KEY = 'f31f61e5e3420118d62be9db5c5d8198cfe655793d2bc327ba9df4309ea5a163';
+const GOERLI_RPC_URL = 'https://goerli.infura.io/v3/' || "";
+const MNEMONIC = '';
+const ETHERSCAN_API_KEY = '';
+const PRIVATE_KEY = '';
 // const PRIVATE_KEYS = PRIVATE_KEY ? [PRIVATE_KEY] : [];
 
 module.exports = {
