@@ -37,7 +37,7 @@ The project is split into two folders ([hardhat](hardhat) and [frontend](fronten
     └── README.md
 ```
 
-## Frontend app URL
+<!-- ## Frontend app URL
 
 https://super-voice-9814.on.fleek.co/
 
@@ -47,4 +47,4 @@ https://www.youtube.com/watch?v=yQ9OrATkuqg
 
 ## Other
 
-> My public ETH address for certification (NFT): 0xCb1E63be3e892126eED1345831720759435c9066
+> My public ETH address for certification (NFT): 0xCb1E63be3e892126eED1345831720759435c9066 -->
