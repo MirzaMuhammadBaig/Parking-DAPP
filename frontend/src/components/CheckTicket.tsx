@@ -7,10 +7,23 @@ import { Zone } from "../constants";
 
 const style = { marginRight: "5px" };
 
-const parseTicketInfo = (ticket: { expiration: number; zone: Zone }): { color: any; label: any } => {
+const parseTicketInfo = (ticket: {
+  expiration: number;
+  zone: Zone;
+}): { color: any; label: any } => {
   const expirationMs = ticket.expiration * 1000;
   const noInfo = expirationMs === 0;
   const hasTicketExpired = expirationMs < Date.now();
+
+  const date = new Date(expirationMs);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12;
 
   return {
     color: noInfo ? "info" : hasTicketExpired ? "error" : "success",
@@ -18,7 +31,11 @@ const parseTicketInfo = (ticket: { expiration: number; zone: Zone }): { color: a
       ? "No ticket bought for this plate number"
       : hasTicketExpired
       ? "Ticket has expired"
-      : `Ticked is valid until: ${new Date(expirationMs).toLocaleString()} in zone ${Zone[ticket.zone]}`,
+      : `Ticket is valid until: ${month}/${day}/${year}, ${formattedHours}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")} ${ampm} in zone ${Zone[ticket.zone]}`,
   };
 };
 

@@ -24,18 +24,26 @@ interface ParkingInterface extends ethers.utils.Interface {
   functions: {
     "buyTicket(string,uint256,uint8)": FunctionFragment;
     "cancelTicket(string)": FunctionFragment;
-    "changeZonePrice(uint256,uint8)": FunctionFragment;
+    "getMemberDetails(address)": FunctionFragment;
     "getTicket(string)": FunctionFragment;
+    "getZoneExpiration(uint8)": FunctionFragment;
+    "isMember(address)": FunctionFragment;
     "isTicketValid(string,uint8)": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "registerMembership(string,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "revokeMemberships()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "transferTicket(string,string,address)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "updateZonePriceForMember(uint256,uint8)": FunctionFragment;
+    "updateZonePriceForNonMember(uint256,uint8)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
     "zonePricePerMinute(uint8)": FunctionFragment;
+    "zonePricePerMinuteForMember(uint8)": FunctionFragment;
+    "zonePricePerMinuteForNonMember(uint8)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -47,10 +55,15 @@ interface ParkingInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "changeZonePrice",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "getMemberDetails",
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "getTicket", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getZoneExpiration",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "isMember", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isTicketValid",
     values: [string, BigNumberish]
@@ -59,7 +72,15 @@ interface ParkingInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "registerMembership",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeMemberships",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -72,11 +93,27 @@ interface ParkingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "updateZonePriceForMember",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateZonePriceForNonMember",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "zonePricePerMinute",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "zonePricePerMinuteForMember",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "zonePricePerMinuteForNonMember",
     values: [BigNumberish]
   ): string;
 
@@ -86,10 +123,15 @@ interface ParkingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeZonePrice",
+    functionFragment: "getMemberDetails",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getTicket", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getZoneExpiration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isMember", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isTicketValid",
     data: BytesLike
@@ -98,7 +140,15 @@ interface ParkingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "registerMembership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeMemberships",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -110,32 +160,66 @@ interface ParkingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateZonePriceForMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateZonePriceForNonMember",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "zonePricePerMinute",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "zonePricePerMinuteForMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "zonePricePerMinuteForNonMember",
+    data: BytesLike
+  ): Result;
 
   events: {
+    "LogMemberRegistered(address,string,string,address,bool)": EventFragment;
+    "LogMembershipRevoked(address)": EventFragment;
     "LogTicketBought(string,uint256,uint8)": EventFragment;
     "LogTicketCanceled(string,uint256)": EventFragment;
     "LogTicketRenewed(string,uint256,uint8)": EventFragment;
-    "LogTicketTransfered(string,string)": EventFragment;
-    "LogZonePriceChanged(uint256,uint8)": EventFragment;
+    "LogTicketTransferred(string,string)": EventFragment;
+    "LogZonePriceChanged(uint256,uint256,uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "LogMemberRegistered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogMembershipRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogTicketBought"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogTicketCanceled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogTicketRenewed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LogTicketTransfered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogTicketTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogZonePriceChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
+
+export type LogMemberRegisteredEvent = TypedEvent<
+  [string, string, string, string, boolean] & {
+    member: string;
+    username: string;
+    licensePlate: string;
+    memberAddr: string;
+    isRegistered: boolean;
+  }
+>;
+
+export type LogMembershipRevokedEvent = TypedEvent<
+  [string] & { member: string }
+>;
 
 export type LogTicketBoughtEvent = TypedEvent<
   [string, BigNumber, number] & {
@@ -157,12 +241,16 @@ export type LogTicketRenewedEvent = TypedEvent<
   }
 >;
 
-export type LogTicketTransferedEvent = TypedEvent<
+export type LogTicketTransferredEvent = TypedEvent<
   [string, string] & { oldPlate: string; newPlate: string }
 >;
 
 export type LogZonePriceChangedEvent = TypedEvent<
-  [BigNumber, number] & { price: BigNumber; zone: number }
+  [BigNumber, BigNumber, number] & {
+    priceForMember: BigNumber;
+    priceForNonMember: BigNumber;
+    zone: number;
+  }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -229,16 +317,29 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    changeZonePrice(
-      price: BigNumberish,
-      zone: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    getMemberDetails(
+      member: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, boolean] & {
+        username: string;
+        licensePlate: string;
+        memberAddr: string;
+        isRegistered: boolean;
+      }
+    >;
 
     getTicket(
       plate: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber, number]>;
+
+    getZoneExpiration(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    isMember(member: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     isTicketValid(
       plate: string,
@@ -254,7 +355,17 @@ export class Parking extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    registerMembership(
+      username: string,
+      licensePlate: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeMemberships(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -274,12 +385,39 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    updateZonePriceForMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updateZonePriceForNonMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     withdraw(
       value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     zonePricePerMinute(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        priceForMember: BigNumber;
+        priceForNonMember: BigNumber;
+      }
+    >;
+
+    zonePricePerMinuteForMember(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    zonePricePerMinuteForNonMember(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -297,16 +435,29 @@ export class Parking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  changeZonePrice(
-    price: BigNumberish,
-    zone: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  getMemberDetails(
+    member: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, boolean] & {
+      username: string;
+      licensePlate: string;
+      memberAddr: string;
+      isRegistered: boolean;
+    }
+  >;
 
   getTicket(
     plate: string,
     overrides?: CallOverrides
   ): Promise<[BigNumber, number]>;
+
+  getZoneExpiration(
+    zone: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  isMember(member: string, overrides?: CallOverrides): Promise<boolean>;
 
   isTicketValid(
     plate: string,
@@ -322,7 +473,17 @@ export class Parking extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  registerMembership(
+    username: string,
+    licensePlate: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeMemberships(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -342,12 +503,39 @@ export class Parking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updateZonePriceForMember(
+    newPrice: BigNumberish,
+    zone: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updateZonePriceForNonMember(
+    newPrice: BigNumberish,
+    zone: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   withdraw(
     value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   zonePricePerMinute(
+    zone: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      priceForMember: BigNumber;
+      priceForNonMember: BigNumber;
+    }
+  >;
+
+  zonePricePerMinuteForMember(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  zonePricePerMinuteForNonMember(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -362,16 +550,29 @@ export class Parking extends BaseContract {
 
     cancelTicket(plate: string, overrides?: CallOverrides): Promise<void>;
 
-    changeZonePrice(
-      price: BigNumberish,
-      zone: BigNumberish,
+    getMemberDetails(
+      member: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<
+      [string, string, string, boolean] & {
+        username: string;
+        licensePlate: string;
+        memberAddr: string;
+        isRegistered: boolean;
+      }
+    >;
 
     getTicket(
       plate: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber, number]>;
+
+    getZoneExpiration(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isMember(member: string, overrides?: CallOverrides): Promise<boolean>;
 
     isTicketValid(
       plate: string,
@@ -385,7 +586,15 @@ export class Parking extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    registerMembership(
+      username: string,
+      licensePlate: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    revokeMemberships(overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -401,15 +610,84 @@ export class Parking extends BaseContract {
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
+    updateZonePriceForMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateZonePriceForNonMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     withdraw(value: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     zonePricePerMinute(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        priceForMember: BigNumber;
+        priceForNonMember: BigNumber;
+      }
+    >;
+
+    zonePricePerMinuteForMember(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    zonePricePerMinuteForNonMember(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   filters: {
+    "LogMemberRegistered(address,string,string,address,bool)"(
+      member?: string | null,
+      username?: null,
+      licensePlate?: null,
+      memberAddr?: null,
+      isRegistered?: null
+    ): TypedEventFilter<
+      [string, string, string, string, boolean],
+      {
+        member: string;
+        username: string;
+        licensePlate: string;
+        memberAddr: string;
+        isRegistered: boolean;
+      }
+    >;
+
+    LogMemberRegistered(
+      member?: string | null,
+      username?: null,
+      licensePlate?: null,
+      memberAddr?: null,
+      isRegistered?: null
+    ): TypedEventFilter<
+      [string, string, string, string, boolean],
+      {
+        member: string;
+        username: string;
+        licensePlate: string;
+        memberAddr: string;
+        isRegistered: boolean;
+      }
+    >;
+
+    "LogMembershipRevoked(address)"(
+      member?: null
+    ): TypedEventFilter<[string], { member: string }>;
+
+    LogMembershipRevoked(
+      member?: null
+    ): TypedEventFilter<[string], { member: string }>;
+
     "LogTicketBought(string,uint256,uint8)"(
       plate?: string | null,
       numOfMinutes?: null,
@@ -462,7 +740,7 @@ export class Parking extends BaseContract {
       { plate: string; numOfMinutes: BigNumber; zone: number }
     >;
 
-    "LogTicketTransfered(string,string)"(
+    "LogTicketTransferred(string,string)"(
       oldPlate?: string | null,
       newPlate?: null
     ): TypedEventFilter<
@@ -470,7 +748,7 @@ export class Parking extends BaseContract {
       { oldPlate: string; newPlate: string }
     >;
 
-    LogTicketTransfered(
+    LogTicketTransferred(
       oldPlate?: string | null,
       newPlate?: null
     ): TypedEventFilter<
@@ -478,20 +756,22 @@ export class Parking extends BaseContract {
       { oldPlate: string; newPlate: string }
     >;
 
-    "LogZonePriceChanged(uint256,uint8)"(
-      price?: null,
+    "LogZonePriceChanged(uint256,uint256,uint8)"(
+      priceForMember?: null,
+      priceForNonMember?: null,
       zone?: null
     ): TypedEventFilter<
-      [BigNumber, number],
-      { price: BigNumber; zone: number }
+      [BigNumber, BigNumber, number],
+      { priceForMember: BigNumber; priceForNonMember: BigNumber; zone: number }
     >;
 
     LogZonePriceChanged(
-      price?: null,
+      priceForMember?: null,
+      priceForNonMember?: null,
       zone?: null
     ): TypedEventFilter<
-      [BigNumber, number],
-      { price: BigNumber; zone: number }
+      [BigNumber, BigNumber, number],
+      { priceForMember: BigNumber; priceForNonMember: BigNumber; zone: number }
     >;
 
     "OwnershipTransferred(address,address)"(
@@ -536,13 +816,19 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    changeZonePrice(
-      price: BigNumberish,
-      zone: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    getMemberDetails(
+      member: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTicket(plate: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getZoneExpiration(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isMember(member: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     isTicketValid(
       plate: string,
@@ -558,7 +844,17 @@ export class Parking extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    registerMembership(
+      username: string,
+      licensePlate: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeMemberships(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -578,12 +874,34 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    updateZonePriceForMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateZonePriceForNonMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     withdraw(
       value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     zonePricePerMinute(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    zonePricePerMinuteForMember(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    zonePricePerMinuteForNonMember(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -602,14 +920,23 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    changeZonePrice(
-      price: BigNumberish,
-      zone: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    getMemberDetails(
+      member: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTicket(
       plate: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getZoneExpiration(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isMember(
+      member: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -627,7 +954,17 @@ export class Parking extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    registerMembership(
+      username: string,
+      licensePlate: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeMemberships(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -647,12 +984,34 @@ export class Parking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    updateZonePriceForMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateZonePriceForNonMember(
+      newPrice: BigNumberish,
+      zone: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     withdraw(
       value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     zonePricePerMinute(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    zonePricePerMinuteForMember(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    zonePricePerMinuteForNonMember(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
