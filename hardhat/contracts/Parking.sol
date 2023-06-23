@@ -85,25 +85,25 @@ contract Parking is Ownable, Pausable {
      * @notice Constructor function that initializes zone prices.
      */
     constructor() {
-        zonePricePerMinuteForMember[ParkingZone.A1] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.A2] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.A3] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.B1] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.B2] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.B3] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.C1] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.C2] = 0.1 ether;
-        zonePricePerMinuteForMember[ParkingZone.C3] = 0.1 ether;
+        zonePricePerMinuteForMember[ParkingZone.A1] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.A2] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.A3] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.B1] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.B2] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.B3] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.C1] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.C2] = 0.0016 ether;
+        zonePricePerMinuteForMember[ParkingZone.C3] = 0.0016 ether;
 
-        zonePricePerMinuteForNonMember[ParkingZone.A1] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.A2] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.A3] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.B1] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.B2] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.B3] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.C1] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.C2] = 0.2 ether;
-        zonePricePerMinuteForNonMember[ParkingZone.C3] = 0.2 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.A1] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.A2] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.A3] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.B1] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.B2] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.B3] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.C1] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.C2] = 0.0033 ether;
+        zonePricePerMinuteForNonMember[ParkingZone.C3] = 0.0033 ether;
     }
 
     /**
