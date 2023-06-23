@@ -410,4 +410,7 @@ contract Parking is Ownable, Pausable {
         (bool succeed, ) = msg.sender.call{value: value}("");
         require(succeed, "Failed to withdraw Ether");
     }
+
+    receive() external payable {}
+
 }
