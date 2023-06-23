@@ -228,19 +228,6 @@ contract Parking is Ownable, Pausable {
         emit LogTicketCanceled(plate, refundAmount);
     }
 
-    function getRefundAmount(
-        ParkingTicket memory ticket
-    ) private view returns (uint256) {
-        uint256 timeLeft = ticket.expirationTime - block.timestamp;
-        uint256 pricePerMinute;
-        if (isMember(ticket.buyer)) {
-            pricePerMinute = zonePricePerMinuteForMember[ticket.zone];
-        } else {
-            pricePerMinute = zonePricePerMinuteForNonMember[ticket.zone];
-        }
-        return (timeLeft / 1 minutes) * pricePerMinute;
-    }
-
     /**
      * @notice Function to transfer a parking ticket to a new license plate.
      * @param oldPlate The current license plate of the car.
