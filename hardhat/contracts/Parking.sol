@@ -36,10 +36,18 @@ contract Parking is Ownable, Pausable {
         bool isRegistered;
     }
 
+    struct ParkingZoneData {
+        uint256 [] nextBookingStartTime;
+        uint256 [] nextBookingEndTime;
+        bool isBookedForFuture;
+        uint256 howMuchTimeIsBought;
+    }
+
+    mapping(ParkingZone => ParkingZoneData) private parkingZoneData;
+
     mapping(ParkingZone => uint256) public zonePricePerMinuteForMember;
     mapping(ParkingZone => uint256) public zonePricePerMinuteForNonMember;
     mapping(string => ParkingTicket) private parkingTickets;
-    mapping(ParkingZone => ParkingTicket) private checkZoneExpiration;
     mapping(address => Member) private memberDetails;
     mapping(address => bool) private members;
 
@@ -48,13 +56,16 @@ contract Parking is Ownable, Pausable {
         uint256 numOfMinutes,
         ParkingZone zone
     );
+
     event LogTicketRenewed(
         string indexed plate,
         uint256 numOfMinutes,
         ParkingZone zone
     );
+
     event LogTicketCanceled(string indexed plate, uint256 balanceLeft);
     event LogTicketTransferred(string indexed oldPlate, string newPlate);
+
     event LogMemberRegistered(
         address indexed member,
         string username,
@@ -62,7 +73,9 @@ contract Parking is Ownable, Pausable {
         address memberAddr,
         bool isRegistered
     );
+
     event LogMembershipRevoked(address member);
+
     event LogZonePriceChanged(
         uint256 priceForMember,
         uint256 priceForNonMember,
@@ -106,26 +119,53 @@ contract Parking is Ownable, Pausable {
         zonePricePerMinuteForNonMember[ParkingZone.C3] = 0.0033 ether;
     }
 
+    function getTime() public view returns(uint256){
+        return block.timestamp + 3 minutes;
+    }
+
+    function gettime() public view returns(uint256){
+        return block.timestamp + 10 seconds;
+    }
+
+    function getParkingZoneData(ParkingZone zone) external view returns (uint256[] memory, uint256[] memory, bool, uint256) {
+    ParkingZoneData memory zoneData = parkingZoneData[zone];
+    return (
+        zoneData.nextBookingStartTime,
+        zoneData.nextBookingEndTime,
+        zoneData.isBookedForFuture,
+        zoneData.howMuchTimeIsBought
+    );
+    }
+
+
     /**
      * @notice Function to buy a parking ticket.
      * @param plate The license plate of the car.
      * @param numOfMinutes The number of minutes to park.
      * @param zone The parking zone.
+     * @param startTimestamp The desired start time for the parking.
      */
     function buyTicket(
         string memory plate,
         uint256 numOfMinutes,
-        ParkingZone zone
+        ParkingZone zone,
+        uint256 startTimestamp
     ) external payable whenNotPaused {
-        require(
-            numOfMinutes > 0,
-            "Number of minutes must be greater than zero"
-        );
+        require(numOfMinutes > 0, "Number of minutes must be greater than zero");
+        require(startTimestamp >= block.timestamp, "Start time can't be in past");
 
-        require(
-            checkZoneExpiration[zone].expirationTime < block.timestamp,
-            "Parking zone already booked by another user"
-        );
+        ParkingZoneData storage zoneData = parkingZoneData[zone];
+
+        // Ensure the zone is not already booked
+        if(zoneData.isBookedForFuture){
+            for(uint256 i = 0; i < zoneData.howMuchTimeIsBought; i++) {
+                require( startTimestamp > zoneData.nextBookingEndTime[i] || startTimestamp < zoneData.nextBookingStartTime[i], "Parking zone already booked");
+                if(startTimestamp < zoneData.nextBookingStartTime[i]){
+                    uint256 _duration = numOfMinutes * 1 minutes;
+                    require( startTimestamp + _duration < zoneData.nextBookingStartTime[i], "Your start time is fine but your end time is ourlap the other's start time of this zone");
+                }
+            }
+        }
 
         uint256 totalPrice;
         if (isMember(msg.sender)) {
@@ -138,25 +178,28 @@ contract Parking is Ownable, Pausable {
 
         uint256 remainingAmount = msg.value - totalPrice;
 
-        ParkingTicket storage zoneExpiration = checkZoneExpiration[zone];
+        uint256 currentTime = block.timestamp;
+        uint256 bookingStartTime = (startTimestamp > currentTime) ? startTimestamp : currentTime;
+
         ParkingTicket storage ticket = parkingTickets[plate];
         uint256 duration = numOfMinutes * 1 minutes;
+        uint256 expiration = bookingStartTime + duration;
 
         // if ticket not expired yet, then extend it
-        if (ticket.expirationTime > block.timestamp) {
-            require(
-                ticket.zone == zone,
-                "You are trying to renew ticket for a different parking zone"
-            );
+        if (ticket.expirationTime > currentTime) {
+            require(ticket.zone == zone, "You are trying to renew ticket for a different parking zone");
             ticket.expirationTime += duration;
-            zoneExpiration.expirationTime += duration;
             emit LogTicketRenewed(plate, numOfMinutes, zone);
         } else {
-            uint256 expiration = block.timestamp + duration;
             parkingTickets[plate] = ParkingTicket(expiration, msg.sender, zone);
-            zoneExpiration.expirationTime = expiration;
             emit LogTicketBought(plate, numOfMinutes, zone);
         }
+
+        // Update the parking zone availability and the next booking start time
+        zoneData.isBookedForFuture = true;
+        zoneData.howMuchTimeIsBought += 1;
+        zoneData.nextBookingStartTime.push(bookingStartTime);
+        zoneData.nextBookingEndTime.push(expiration);
 
         if (remainingAmount > 0) {
             payable(msg.sender).transfer(remainingAmount);
@@ -365,16 +408,6 @@ contract Parking is Ownable, Pausable {
     {
         priceForMember = zonePricePerMinuteForMember[zone];
         priceForNonMember = zonePricePerMinuteForNonMember[zone];
-    }
-
-    function getZoneExpiration(
-        ParkingZone zone
-    ) external view returns (uint256) {
-        if (checkZoneExpiration[zone].expirationTime > block.timestamp) {
-            return checkZoneExpiration[zone].expirationTime;
-        } else {
-            return 0;
-        }
     }
 
     /// @notice Function to pause the contract. Can be called by contract owner only.
