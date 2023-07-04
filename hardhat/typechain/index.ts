@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Ownable } from "./Ownable";
-export type { Pausable } from "./Pausable";
 export type { Parking } from "./Parking";
+export type { Pausable } from "./Pausable";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
-export { Pausable__factory } from "./factories/Pausable__factory";
 export { Parking__factory } from "./factories/Parking__factory";
+export { Pausable__factory } from "./factories/Pausable__factory";

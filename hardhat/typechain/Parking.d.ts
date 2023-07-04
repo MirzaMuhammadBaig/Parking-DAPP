@@ -22,11 +22,11 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface ParkingInterface extends ethers.utils.Interface {
   functions: {
-    "buyTicket(string,uint256,uint8)": FunctionFragment;
+    "buyTicket(string,uint256,uint8,uint256)": FunctionFragment;
     "cancelTicket(string)": FunctionFragment;
     "getMemberDetails(address)": FunctionFragment;
+    "getParkingZoneData(uint8)": FunctionFragment;
     "getTicket(string)": FunctionFragment;
-    "getZoneExpiration(uint8)": FunctionFragment;
     "isMember(address)": FunctionFragment;
     "isTicketValid(string,uint8)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -48,7 +48,7 @@ interface ParkingInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "buyTicket",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTicket",
@@ -58,11 +58,11 @@ interface ParkingInterface extends ethers.utils.Interface {
     functionFragment: "getMemberDetails",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "getTicket", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "getZoneExpiration",
+    functionFragment: "getParkingZoneData",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "getTicket", values: [string]): string;
   encodeFunctionData(functionFragment: "isMember", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isTicketValid",
@@ -126,11 +126,11 @@ interface ParkingInterface extends ethers.utils.Interface {
     functionFragment: "getMemberDetails",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getTicket", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getZoneExpiration",
+    functionFragment: "getParkingZoneData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getTicket", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isMember", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isTicketValid",
@@ -309,6 +309,7 @@ export class Parking extends BaseContract {
       plate: string,
       numOfMinutes: BigNumberish,
       zone: BigNumberish,
+      startTimestamp: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -329,15 +330,15 @@ export class Parking extends BaseContract {
       }
     >;
 
+    getParkingZoneData(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[], boolean, BigNumber]>;
+
     getTicket(
       plate: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber, number]>;
-
-    getZoneExpiration(
-      zone: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     isMember(member: string, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -407,8 +408,8 @@ export class Parking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & {
-        priceForMember: BigNumber;
         priceForNonMember: BigNumber;
+        priceForMember: BigNumber;
       }
     >;
 
@@ -427,6 +428,7 @@ export class Parking extends BaseContract {
     plate: string,
     numOfMinutes: BigNumberish,
     zone: BigNumberish,
+    startTimestamp: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -447,15 +449,15 @@ export class Parking extends BaseContract {
     }
   >;
 
+  getParkingZoneData(
+    zone: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber[], BigNumber[], boolean, BigNumber]>;
+
   getTicket(
     plate: string,
     overrides?: CallOverrides
   ): Promise<[BigNumber, number]>;
-
-  getZoneExpiration(
-    zone: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   isMember(member: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -525,8 +527,8 @@ export class Parking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber] & {
-      priceForMember: BigNumber;
       priceForNonMember: BigNumber;
+      priceForMember: BigNumber;
     }
   >;
 
@@ -545,6 +547,7 @@ export class Parking extends BaseContract {
       plate: string,
       numOfMinutes: BigNumberish,
       zone: BigNumberish,
+      startTimestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -562,15 +565,15 @@ export class Parking extends BaseContract {
       }
     >;
 
+    getParkingZoneData(
+      zone: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], BigNumber[], boolean, BigNumber]>;
+
     getTicket(
       plate: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber, number]>;
-
-    getZoneExpiration(
-      zone: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     isMember(member: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -629,8 +632,8 @@ export class Parking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & {
-        priceForMember: BigNumber;
         priceForNonMember: BigNumber;
+        priceForMember: BigNumber;
       }
     >;
 
@@ -808,6 +811,7 @@ export class Parking extends BaseContract {
       plate: string,
       numOfMinutes: BigNumberish,
       zone: BigNumberish,
+      startTimestamp: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -821,12 +825,12 @@ export class Parking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTicket(plate: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getZoneExpiration(
+    getParkingZoneData(
       zone: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTicket(plate: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     isMember(member: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -912,6 +916,7 @@ export class Parking extends BaseContract {
       plate: string,
       numOfMinutes: BigNumberish,
       zone: BigNumberish,
+      startTimestamp: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -925,13 +930,13 @@ export class Parking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getTicket(
-      plate: string,
+    getParkingZoneData(
+      zone: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getZoneExpiration(
-      zone: BigNumberish,
+    getTicket(
+      plate: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

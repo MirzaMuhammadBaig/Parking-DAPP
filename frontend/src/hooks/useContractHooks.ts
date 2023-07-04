@@ -20,8 +20,8 @@ const useContractFetch = (method: string, args: any[] = []) =>
   useContractCall({
     abi: contractInterface,
     address: CONTRACT_ADDRESS,
-    args,
     method,
+    args,
   }) || [];
 
 const useContract = (method: string, options: object = {}) =>
@@ -47,8 +47,9 @@ export const useGetTicketInfo = (
 type UseSetZonePrice = (price: BigNumber, zone: Zone) => Promise<void>;
 type UseBuyTicket = (
   plate: string,
-  duration: number,
+  numOfMinutes: number,
   zone: Zone,
+  startTimestamp: number,
   value: { value: BigNumber }
 ) => Promise<void>;
 type UseCancelTicket = (plate: string) => Promise<void>;

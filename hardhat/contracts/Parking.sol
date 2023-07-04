@@ -37,8 +37,8 @@ contract Parking is Ownable, Pausable {
     }
 
     struct ParkingZoneData {
-        uint256 [] nextBookingStartTime;
-        uint256 [] nextBookingEndTime;
+        uint256[] nextBookingStartTime;
+        uint256[] nextBookingEndTime;
         bool isBookedForFuture;
         uint256 howMuchTimeIsBought;
     }
@@ -132,18 +132,32 @@ contract Parking is Ownable, Pausable {
         ParkingZone zone,
         uint256 startTimestamp
     ) external payable whenNotPaused {
-        require(numOfMinutes > 0, "Number of minutes must be greater than zero");
-        require(startTimestamp >= block.timestamp, "Start time can't be in past");
+        require(
+            numOfMinutes > 0,
+            "Number of minutes must be greater than zero"
+        );
+        require(
+            startTimestamp >= block.timestamp,
+            "Start time can't be in past"
+        );
 
         ParkingZoneData storage zoneData = parkingZoneData[zone];
 
         // Ensure the zone is not already booked
-        if(zoneData.isBookedForFuture){
-            for(uint256 i = 0; i < zoneData.howMuchTimeIsBought; i++) {
-                require( startTimestamp > zoneData.nextBookingEndTime[i] || startTimestamp < zoneData.nextBookingStartTime[i], "Parking zone already booked");
-                if(startTimestamp < zoneData.nextBookingStartTime[i]){
+        if (zoneData.isBookedForFuture) {
+            for (uint256 i = 0; i < zoneData.howMuchTimeIsBought; i++) {
+                require(
+                    startTimestamp > zoneData.nextBookingEndTime[i] ||
+                        startTimestamp < zoneData.nextBookingStartTime[i],
+                    "Parking zone already booked"
+                );
+                if (startTimestamp < zoneData.nextBookingStartTime[i]) {
                     uint256 _duration = numOfMinutes * 1 minutes;
-                    require( startTimestamp + _duration < zoneData.nextBookingStartTime[i], "Your start time is fine but your end time is ourlap the other's start time of this zone");
+                    require(
+                        startTimestamp + _duration <
+                            zoneData.nextBookingStartTime[i],
+                        "Your start time is fine but your end time is ourlap the other's start time of this zone"
+                    );
                 }
             }
         }
@@ -160,7 +174,9 @@ contract Parking is Ownable, Pausable {
         uint256 remainingAmount = msg.value - totalPrice;
 
         uint256 currentTime = block.timestamp;
-        uint256 bookingStartTime = (startTimestamp > currentTime) ? startTimestamp : currentTime;
+        uint256 bookingStartTime = (startTimestamp > currentTime)
+            ? startTimestamp
+            : currentTime;
 
         ParkingTicket storage ticket = parkingTickets[plate];
         uint256 duration = numOfMinutes * 1 minutes;
@@ -168,7 +184,10 @@ contract Parking is Ownable, Pausable {
 
         // if ticket not expired yet, then extend it
         if (ticket.expirationTime > currentTime) {
-            require(ticket.zone == zone, "You are trying to renew ticket for a different parking zone");
+            require(
+                ticket.zone == zone,
+                "You are trying to renew ticket for a different parking zone"
+            );
             ticket.expirationTime += duration;
             emit LogTicketRenewed(plate, numOfMinutes, zone);
         } else {
@@ -380,14 +399,20 @@ contract Parking is Ownable, Pausable {
         return members[member];
     }
 
-    function getParkingZoneData(ParkingZone zone) external view returns (uint256[] memory, uint256[] memory, bool, uint256) {
-    ParkingZoneData memory zoneData = parkingZoneData[zone];
-    return (
-        zoneData.nextBookingStartTime,
-        zoneData.nextBookingEndTime,
-        zoneData.isBookedForFuture,
-        zoneData.howMuchTimeIsBought
-    );
+    function getParkingZoneData(
+        ParkingZone zone
+    )
+        external
+        view
+        returns (uint256[] memory, uint256[] memory, bool, uint256)
+    {
+        ParkingZoneData memory zoneData = parkingZoneData[zone];
+        return (
+            zoneData.nextBookingStartTime,
+            zoneData.nextBookingEndTime,
+            zoneData.isBookedForFuture,
+            zoneData.howMuchTimeIsBought
+        );
     }
 
     function zonePricePerMinute(
@@ -423,5 +448,4 @@ contract Parking is Ownable, Pausable {
     }
 
     receive() external payable {}
-
 }
