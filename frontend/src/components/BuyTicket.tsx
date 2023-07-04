@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { BigNumber } from "@ethersproject/bignumber";
+// import { BigNumber } from "@ethersproject/bignumber";
 
 import { BoxItem } from "./BoxItem";
 import { Zone } from "../constants";
