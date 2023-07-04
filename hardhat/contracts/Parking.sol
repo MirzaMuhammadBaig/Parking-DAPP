@@ -119,25 +119,6 @@ contract Parking is Ownable, Pausable {
         zonePricePerMinuteForNonMember[ParkingZone.C3] = 0.0033 ether;
     }
 
-    function getTime() public view returns(uint256){
-        return block.timestamp + 3 minutes;
-    }
-
-    function gettime() public view returns(uint256){
-        return block.timestamp + 10 seconds;
-    }
-
-    function getParkingZoneData(ParkingZone zone) external view returns (uint256[] memory, uint256[] memory, bool, uint256) {
-    ParkingZoneData memory zoneData = parkingZoneData[zone];
-    return (
-        zoneData.nextBookingStartTime,
-        zoneData.nextBookingEndTime,
-        zoneData.isBookedForFuture,
-        zoneData.howMuchTimeIsBought
-    );
-    }
-
-
     /**
      * @notice Function to buy a parking ticket.
      * @param plate The license plate of the car.
@@ -399,15 +380,25 @@ contract Parking is Ownable, Pausable {
         return members[member];
     }
 
+    function getParkingZoneData(ParkingZone zone) external view returns (uint256[] memory, uint256[] memory, bool, uint256) {
+    ParkingZoneData memory zoneData = parkingZoneData[zone];
+    return (
+        zoneData.nextBookingStartTime,
+        zoneData.nextBookingEndTime,
+        zoneData.isBookedForFuture,
+        zoneData.howMuchTimeIsBought
+    );
+    }
+
     function zonePricePerMinute(
         ParkingZone zone
     )
         external
         view
-        returns (uint256 priceForMember, uint256 priceForNonMember)
+        returns (uint256 priceForNonMember, uint256 priceForMember)
     {
-        priceForMember = zonePricePerMinuteForMember[zone];
         priceForNonMember = zonePricePerMinuteForNonMember[zone];
+        priceForMember = zonePricePerMinuteForMember[zone];
     }
 
     /// @notice Function to pause the contract. Can be called by contract owner only.
