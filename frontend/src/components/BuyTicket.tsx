@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, ChangeEvent } from "react";
 import { Button, TextField } from "@mui/material";
 // import { BigNumber } from "@ethersproject/bignumber";
 
@@ -17,7 +17,8 @@ export const BuyTicket: FC = () => {
   const [zone, setZone] = useState<Zone | string>("");
   const [plate, setPlate] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
-  const [startTime, setStartTime] = useState<number>(0); // Initialize with current timestamp in seconds
+  const [unixTime, setUnixTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(Date.now() / 1000); // Initialize with current timestamp in seconds
 
   const zonePrice = useGetZonePrice(zone as Zone);
   const totalPrice = zonePrice.mul(duration || 0);
@@ -27,9 +28,14 @@ export const BuyTicket: FC = () => {
     if (!plate || !duration || zone === "" || totalPrice.lte(0)) return;
 
     clearTx();
-    await buyTicket(plate, duration, zone as Zone, startTime, {
+    await buyTicket(plate, duration, zone as Zone, unixTime, {
       value: totalPrice,
     });
+  };
+
+  const handleUnixTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedTime = Math.ceil(new Date(e.target.value).getTime() / 1000);
+    setUnixTime(selectedTime);
   };
 
   return (
@@ -51,23 +57,16 @@ export const BuyTicket: FC = () => {
         inputProps={{ min: "1" }}
       />
       <ZoneSelect zone={zone} setZone={setZone} />
-      {/* <TextField
-        style={style}
-        label="Start Time"
-        variant="outlined"
-        type="datetime-local"
-        value={new Date(startTime * 1000).toISOString().slice(0, -1)} // Convert start time to ISO string format for datetime-local input
-        onChange={(e) =>
-          setStartTime(new Date(e.target.value).getTime() / 1000)
-        } // Convert input value to timestamp in seconds
-      /> */}
       <TextField
         style={style}
         label="Start Time"
         variant="outlined"
-        type="number"
-        value={startTime} // Convert start time to ISO string format for datetime-local input
-        onChange={(e) => setStartTime(parseInt(e.target.value))} // Convert input value to timestamp in seconds
+        type="datetime-local"
+        value={new Date(startTime * 1000).toISOString().slice(0, -1)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setStartTime(new Date(e.target.value).getTime() / 1000);
+          handleUnixTimeChange(e);
+        }}
       />
       <TextField
         style={style}
