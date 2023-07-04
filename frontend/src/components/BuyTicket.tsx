@@ -17,7 +17,7 @@ export const BuyTicket: FC = () => {
   const [zone, setZone] = useState<Zone | string>("");
   const [plate, setPlate] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
-  const [startTime, setStartTime] = useState<number>(Date.now() / 1000); // Initialize with current timestamp in seconds
+  const [startTime, setStartTime] = useState<number>(0); // Initialize with current timestamp in seconds
 
   const zonePrice = useGetZonePrice(zone as Zone);
   const totalPrice = zonePrice.mul(duration || 0);
@@ -51,7 +51,7 @@ export const BuyTicket: FC = () => {
         inputProps={{ min: "1" }}
       />
       <ZoneSelect zone={zone} setZone={setZone} />
-      <TextField
+      {/* <TextField
         style={style}
         label="Start Time"
         variant="outlined"
@@ -60,6 +60,14 @@ export const BuyTicket: FC = () => {
         onChange={(e) =>
           setStartTime(new Date(e.target.value).getTime() / 1000)
         } // Convert input value to timestamp in seconds
+      /> */}
+      <TextField
+        style={style}
+        label="Start Time"
+        variant="outlined"
+        type="number"
+        value={startTime} // Convert start time to ISO string format for datetime-local input
+        onChange={(e) => setStartTime(parseInt(e.target.value))} // Convert input value to timestamp in seconds
       />
       <TextField
         style={style}
