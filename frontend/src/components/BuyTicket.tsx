@@ -1,6 +1,5 @@
 import { FC, useState, ChangeEvent } from "react";
 import { Button, TextField } from "@mui/material";
-// import { BigNumber } from "@ethersproject/bignumber";
 
 import { BoxItem } from "./BoxItem";
 import { Zone } from "../constants";
@@ -18,7 +17,7 @@ export const BuyTicket: FC = () => {
   const [plate, setPlate] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [unixTime, setUnixTime] = useState<number>(0);
-  const [startTime, setStartTime] = useState<number>(Date.now() / 1000); // Initialize with current timestamp in seconds
+  const [startTime, setStartTime] = useState<number>(Date.now() / 1000);
 
   const zonePrice = useGetZonePrice(zone as Zone);
   const totalPrice = zonePrice.mul(duration || 0);
@@ -26,7 +25,6 @@ export const BuyTicket: FC = () => {
 
   const handleBuyTicket = async () => {
     if (!plate || !duration || zone === "" || totalPrice.lte(0)) return;
-
     clearTx();
     await buyTicket(plate, duration, zone as Zone, unixTime, {
       value: totalPrice,
@@ -38,50 +36,64 @@ export const BuyTicket: FC = () => {
     setUnixTime(selectedTime);
   };
 
+  const [selectedTime, setSelectedTime] = useState(
+    new Date(startTime * 1000).toISOString().slice(0, -8)
+  );
+
   return (
-    <BoxItem label="Buy parking ticket">
-      <TextField
-        style={style}
-        label="Car's plate"
-        variant="outlined"
-        value={plate}
-        onChange={(e) => setPlate(e.target.value)}
-      />
-      <TextField
-        style={style}
-        label="Duration (mins):"
-        variant="outlined"
-        type="number"
-        value={duration}
-        onChange={(e) => setDuration(parseInt(e.target.value))}
-        inputProps={{ min: "1" }}
-      />
-      <ZoneSelect zone={zone} setZone={setZone} />
-      <TextField
-        style={style}
-        label="Start Time"
-        variant="outlined"
-        type="datetime-local"
-        value={new Date(startTime * 1000).toISOString().slice(0, -1)}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setStartTime(new Date(e.target.value).getTime() / 1000);
-          handleUnixTimeChange(e);
-        }}
-      />
-      <TextField
-        style={style}
-        label="Price (in Wei):"
-        variant="outlined"
-        type="number"
-        value={totalPrice.toString()}
-        InputProps={{
-          readOnly: true,
-        }}
-      />
-      <Button variant="contained" color="secondary" onClick={handleBuyTicket}>
-        Buy ticket
-      </Button>
-      <Toast tx={tx} />
-    </BoxItem>
+    <>
+      <BoxItem label="Buy parking ticket">
+        <TextField
+          style={style}
+          label="Car's plate"
+          variant="outlined"
+          value={plate}
+          onChange={(e) => setPlate(e.target.value)}
+        />
+        <TextField
+          style={style}
+          label="Duration (mins):"
+          variant="outlined"
+          type="number"
+          value={duration}
+          onChange={(e) => setDuration(parseInt(e.target.value))}
+          inputProps={{ min: "1" }}
+        />
+
+        <ZoneSelect zone={zone} setZone={setZone} />
+
+        <TextField
+          style={style}
+          label="Start Time"
+          variant="outlined"
+          type="datetime-local"
+          value={selectedTime}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setStartTime(new Date(e.target.value).getTime() / 1000);
+            setSelectedTime(e.target.value);
+            handleUnixTimeChange(e);
+          }}
+        />
+
+        <TextField
+          style={style}
+          label="Price (in Wei):"
+          variant="outlined"
+          type="number"
+          value={totalPrice.toString()}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+
+        <Button variant="contained" color="secondary" onClick={handleBuyTicket}>
+          Buy ticket
+        </Button>
+        <Toast tx={tx} />
+      </BoxItem>
+      <span style={{ color: "yellow", background: "red" }}>
+        -Make sure your device time must be correct-
+      </span>
+    </>
   );
 };
